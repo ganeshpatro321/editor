@@ -16,6 +16,8 @@ interface Props {
 
 const initialState = {
   currentPage: 0,
+  firstListener: true,
+  listened: false,
   selectedData: '',
   selections: [],
 };
@@ -35,12 +37,18 @@ export default class DataViewer extends React.Component<Props, State> {
   }
 
   public handleChange(option) {
-    if (this.state.selections.length !== 0) {
-      this.props.view.removeDataListener(this.state.selections[this.state.selections.length - 1], () => {
+    // if (this.state.selections.length !== 0) {
+    //   this.props.view.removeDataListener(this.state.selections[this.state.selections.length - 1], () => {
+    //     /* */
+    //   });
+    // }
+    const prevSelected = this.state.selectedData;
+    this.setState({ selectedData: option.value, currentPage: 0, listened: false });
+    if (this.state.listened) {
+      this.props.view.removeDataListener(prevSelected, () => {
         /* */
       });
     }
-    this.setState({ selectedData: option.value, currentPage: 0, selections: [] });
   }
 
   public handlePageChange(option) {
@@ -73,15 +81,12 @@ export default class DataViewer extends React.Component<Props, State> {
 
     const data = this.props.view.data(selected) || [];
 
-    if (this.props.debugPane && this.state.selections.indexOf(selected) < 0) {
+    if ((this.props.debugPane && !this.state.listened) || this.state.firstListener) {
       this.props.view.addDataListener(selected, () => {
-        if (this.state.selections.indexOf(selected) < 0) {
-          const temp = this.state.selections;
-          temp.push(selected);
-          this.setState({
-            selections: temp,
-          });
-        }
+        this.setState({
+          firstListener: false,
+          listened: true,
+        });
         this.forceUpdate();
       });
     }
