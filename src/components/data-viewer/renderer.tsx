@@ -11,13 +11,11 @@ import Table from '../table';
 
 interface Props {
   view?: View;
-  debugPane: boolean;
 }
 
 const initialState = {
   currentPage: 0,
   selectedData: '',
-  selections: [],
 };
 
 type State = Readonly<typeof initialState>;
@@ -31,16 +29,11 @@ export default class DataViewer extends React.Component<Props, State> {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
-    this.handleReload = this.handleReload.bind(this);
+    this.dataChanged = this.dataChanged.bind(this);
   }
 
   public handleChange(option) {
-    if (this.state.selections.length !== 0) {
-      this.props.view.removeDataListener(this.state.selections[this.state.selections.length - 1], () => {
-        /* */
-      });
-    }
-    this.setState({ selectedData: option.value, currentPage: 0, selections: [] });
+    this.setState({ selectedData: option.value, currentPage: 0 });
   }
 
   public handlePageChange(option) {
@@ -48,12 +41,36 @@ export default class DataViewer extends React.Component<Props, State> {
     this.setState({ currentPage: selected });
   }
 
-  public handleReload() {
-    this.forceUpdate();
-  }
-
   public getDatasets() {
     return Object.keys(this.props.view.getState({ data: vega.truthy, signals: vega.falsy, recurse: true }).data);
+  }
+
+  public componentDidMount() {
+    const datasets = this.getDatasets();
+
+    if (datasets.length) {
+      this.setState({
+        selectedData: datasets[1],
+      });
+    }
+  }
+
+  public componentWillUnmount() {
+    if (this.state.selectedData) {
+      this.props.view.removeDataListener(this.state.selectedData, this.dataChanged);
+    }
+  }
+
+  public componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.props.view !== prevProps.view || this.state.selectedData !== prevState.selectedData) {
+      if (prevState.selectedData) {
+        prevProps.view.removeDataListener(prevState.selectedData, this.dataChanged);
+      }
+
+      if (this.state.selectedData) {
+        this.props.view.addDataListener(this.state.selectedData, this.dataChanged);
+      }
+    }
   }
 
   public render() {
@@ -69,22 +86,9 @@ export default class DataViewer extends React.Component<Props, State> {
       selected = datasets[0];
     }
 
-    let pagination;
+    let pagination: ReactPaginate;
 
     const data = this.props.view.data(selected) || [];
-
-    if (this.props.debugPane && this.state.selections.indexOf(selected) < 0) {
-      this.props.view.addDataListener(selected, () => {
-        if (this.state.selections.indexOf(selected) < 0) {
-          const temp = this.state.selections;
-          temp.push(selected);
-          this.setState({
-            selections: temp,
-          });
-        }
-        this.forceUpdate();
-      });
-    }
 
     const pageCount = Math.ceil(data.length / ROWS_PER_PAGE);
 
@@ -112,7 +116,7 @@ export default class DataViewer extends React.Component<Props, State> {
     const table = data.length ? (
       <Table header={Object.keys(data[0])} data={visibleData} />
     ) : (
-      <span className="error">The table appears empty. Try to refresh if you think there is data.</span>
+      <span className="error">The table is empty.</span>
     );
 
     return (
@@ -134,5 +138,9 @@ export default class DataViewer extends React.Component<Props, State> {
         <ErrorBoundary>{table}</ErrorBoundary>
       </div>
     );
+  }
+
+  private dataChanged() {
+    this.forceUpdate();
   }
 }
