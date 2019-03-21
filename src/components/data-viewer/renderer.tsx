@@ -16,7 +16,6 @@ interface Props {
 
 const initialState = {
   currentPage: 0,
-  firstListener: true,
   listened: false,
   selectedData: '',
   selections: [],
@@ -37,11 +36,6 @@ export default class DataViewer extends React.Component<Props, State> {
   }
 
   public handleChange(option) {
-    // if (this.state.selections.length !== 0) {
-    //   this.props.view.removeDataListener(this.state.selections[this.state.selections.length - 1], () => {
-    //     /* */
-    //   });
-    // }
     const prevSelected = this.state.selectedData;
     this.setState({ selectedData: option.value, currentPage: 0, listened: false });
     if (this.state.listened) {
@@ -81,10 +75,9 @@ export default class DataViewer extends React.Component<Props, State> {
 
     const data = this.props.view.data(selected) || [];
 
-    if ((this.props.debugPane && !this.state.listened) || this.state.firstListener) {
+    if (this.props.debugPane && !this.state.listened) {
       this.props.view.addDataListener(selected, () => {
         this.setState({
-          firstListener: false,
           listened: true,
         });
         this.forceUpdate();
