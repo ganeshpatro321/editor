@@ -13,16 +13,46 @@ export const findByTestAttr = (component, attr) => {
 };
 
 describe('Header Component', () => {
-  let component;
-  beforeEach(() => {
-    component = setup();
+  describe('Have props', () => {
+    let component;
+    beforeEach(() => {
+      const props = {
+        editorString: {},
+        lastPosition: 0,
+        manualParse: false,
+        mode: 'vega-lite',
+
+        showExample: false,
+        // exportVega: jest.fn(),
+        // formatSpec: jest.fn(),
+        // location: { pathname: '/', search: '', hash: '', state: undefined },
+
+        // match: undefined,
+        // parseSpec: jest.fn(),
+
+        vegaLiteSpec: null,
+        vegaSpec: {},
+        view: null,
+        // history: { length: 0 },
+        // setScrollPosition: jest.fn(),
+        // staticContext: undefined,
+        // toggleAutoParse: jest.fn(),
+      };
+      component = setup(props);
+    });
+    it('Should render without errors', () => {
+      const wrapper = findByTestAttr(component, 'header');
+      expect(wrapper.length).toBe(1);
+    });
   });
-  it('Should render without errors', () => {
-    const wrapper = findByTestAttr(component, 'header');
-    expect(wrapper.length).toBe(1);
-  });
-  it('Should render the image', () => {
-    const img = findByTestAttr(component, 'idl-img');
-    expect(img.length).toBe(1);
+  describe('Have No Props', () => {
+    let component;
+    beforeEach(() => {
+      component = setup();
+    });
+    it('Should not render', () => {
+      const wrapper = findByTestAttr(component, 'header');
+      expect(wrapper.length).toBe(0);
+    });
   });
 });
