@@ -786,7 +786,7 @@ class Header extends React.Component<Props, State> {
     const helpModal = <HelpModal />;
 
     return (
-      <div className="header">
+      <div className="header" data-test="header">
         <section className="left-section">
           <span>{modeSwitcher}</span>
           <span>{clearButton}</span>
