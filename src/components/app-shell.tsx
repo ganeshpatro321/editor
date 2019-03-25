@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import App from './app';
+import Reset from './reset';
 
 interface Props {
   logPageView: () => void;
@@ -24,6 +25,7 @@ export default class AppShell extends React.Component<Props> {
           <Route path="/examples" component={() => <App showExample={true} />} />
           <Route path="/custom/:mode" component={App} />
           <Route path="/url/:mode/:compressed" component={App} />
+          <Route path="/reset" component={() => <Reset reset={true} />} />
         </Switch>
       </div>
     );
