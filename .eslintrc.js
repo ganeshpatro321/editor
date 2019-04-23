@@ -56,7 +56,7 @@ module.exports = {
     "no-shadow": 1,
     "no-useless-concat": 1,
     // "prefer-template": 1,  // we can do this later
-    "no-console": 0, // we use console
+    "no-console": 1,
     "no-undef": 0, // typescript takes care of this for us
     "no-unreachable": 0 // typescript takes care of this for us
   }

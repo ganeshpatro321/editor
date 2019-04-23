@@ -14,7 +14,7 @@ const MAX_LENGTH = 120;
 export default class Table extends React.PureComponent<Props> {
   public render() {
     const headerNodes = this.props.header.map(h => <th key={h}>{h}</th>);
-
+    console.log('table');
     const tableBody = this.props.data.map((row, i) => {
       const rowNodes = this.props.header.map((field, j) => {
         let tooLong = false;

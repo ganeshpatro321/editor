@@ -85,7 +85,7 @@
     "generate-example-images": "./scripts/generate-example-images.sh",
     "postinstall": "npm run vendor",
     "vendor": "./scripts/vendor.sh",
-    "eslintbase": "eslint '{src,test}/**/*.ts' '*.js'",
+    "eslintbase": "eslint '{src,test}/**/*.ts' '*.js' '*.tsx'",
     "prettierbase": "prettier '*.scss' '*.html'",
     "format": "npm run eslintbase -- --fix && npm run prettierbase -- --write",
     "lint": "npm run eslintbase && npm run prettierbase -- --check",
